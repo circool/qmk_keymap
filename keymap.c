@@ -1,3 +1,13 @@
+/* Содержат определения клавиш и комбинаций клавиш, а также функциональные определения, 
+ *  такие как тапы, двойные нажатия и т. д.
+*/
+
+
+
+
+
+
+
 /* Return an integer that corresponds to what kind of tap dance should be executed.
  *
  * How to figure out tap dance state: interrupted and pressed.

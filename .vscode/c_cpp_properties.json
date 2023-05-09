@@ -1,0 +1,22 @@
+{
+  "configurations": [
+      {
+          "name": "qmk",
+          "compilerArgs": ["-mmcu=atmega32u4"],
+          "compilerPath": "/usr/bin/avr-gcc",
+          "cStandard": "gnu11",
+          "cppStandard": "gnu++14",
+          "compileCommands": "${workspaceFolder}/compile_commands.json",
+          "intelliSenseMode": "linux-gcc-arm",
+          "browse": {
+              "path": [
+                  "${workspaceFolder}"
+              ],
+              "limitSymbolsToIncludedHeaders": true,
+              "databaseFilename": ""
+          }
+      }
+  ],
+  "version": 4
+ }
+ 
