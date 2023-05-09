@@ -6,67 +6,104 @@
 
 
 
-// Определение разных цветов для каждого слоя
-static uint32_t layer_colors[4] = {
-  0x000000, // Отключен
-  0xFF0000, // Красный
-  0x00FF00, // Зеленый
-  0x0000FF, // Синий
-};
 
-// Обработчик события слоя
-layer_state_t layer_state_set_user(layer_state_t state) {
-  uint8_t layer = get_highest_layer(state);
-  if (layer > 0) {
-    // Установка цвета светодиода в зависимости от активного слоя
-    set_led_color(layer_colors[layer]);
-  } else {
-    // Если слой отключен, отключить светодиод
-    set_led_color(0x000000);
-  }
-  return state;
-}
 
-// Глобальные переменные для подсчета времени между нажатиями
-static uint32_t last_minus_press_time = 0;
-static uint8_t minus_press_count = 0;
+// Источник https://github.com/Keychron/qmk_firmware/blob/bluetooth_playground/keyboards/keychron/k8_pro/ansi/rgb/config.h
 
-// Обработчик нажатия клавиши "-"
-void process_minus_press(uint16_t keycode, keyrecord_t *record) {
-  // Проверка, что клавиша была нажата
-  if (record->event.pressed) {
-    uint32_t current_time = timer_read();
-    // Проверка, что это не повторный вызов функции
-    if (current_time - last_minus_press_time > 1000) {
-      // Сброс счетчика
-      if (minus_press_count == 4) {
-        minus_press_count = 1;
-      } else {
-        minus_press_count++;
-      }
-    }
-    if (minus_press_count == 4) {
-      // Получение текущего языка
-      char *lang = get_keyboard_language();
-      // Генерация новой строки
-      char str[20];
-      memset(str, '-', 20);
-      // Отправка строки в операционную систему (на примере MacOS)
-      send_string_to_os(str, lang);
-    }
-    // Сохранение времени нажатия
-    last_minus_press_time = current_time;
-  }
-}
+/* Copyright 2021 @ Keychron (https://www.keychron.com)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-// Обработчик клавиши "-"
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case KC_MINUS:
-      process_minus_press(keycode, record);
-      break;
-    default:
-      break;
-  }
-  return true;
-}
+#pragma once
+
+#ifdef RGB_MATRIX_ENABLE
+/* RGB Matrix driver configuration */
+#    define DRIVER_COUNT 2
+
+#    define DRIVER_ADDR_1 0b1110111
+#    define DRIVER_ADDR_2 0b1110100
+#    define DRIVER_1_LED_COUNT 47
+#    define DRIVER_2_LED_COUNT 40
+#    define RGB_MATRIX_LED_COUNT (DRIVER_1_LED_COUNT + DRIVER_2_LED_COUNT)
+
+/* Set to infinit, which is use in USB mode by default */
+#    define RGB_MATRIX_TIMEOUT RGB_MATRIX_TIMEOUT_INFINITE
+
+/* Allow shutdown of led driver to save power */
+#    define RGB_MATRIX_DRIVER_SHUTDOWN_ENABLE
+/* Turn off backlight on low brightness to save power */
+#    define RGB_MATRIX_BRIGHTNESS_TURN_OFF_VAL 32
+
+/* RGB Matrix Animation modes. Explicitly enabled
+ * For full list of effects, see:
+ * https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects
+ */
+
+#    define RGB_MATRIX_KEYPRESSES
+#    define RGB_MATRIX_FRAMEBUFFER_EFFECTS
+
+// #    define ENABLE_RGB_MATRIX_ALPHAS_MODS
+// #    define ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
+// #    define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
+#    define ENABLE_RGB_MATRIX_BREATHING
+// #    define ENABLE_RGB_MATRIX_BAND_SAT
+// #    define ENABLE_RGB_MATRIX_BAND_VAL
+// #    define ENABLE_RGB_MATRIX_BAND_PINWHEEL_SAT
+// #    define ENABLE_RGB_MATRIX_BAND_PINWHEEL_VAL
+// #    define ENABLE_RGB_MATRIX_BAND_SPIRAL_SAT
+#    define ENABLE_RGB_MATRIX_BAND_SPIRAL_VAL
+#    define ENABLE_RGB_MATRIX_CYCLE_ALL
+#    define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
+#    define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
+#    define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON
+#    define ENABLE_RGB_MATRIX_CYCLE_OUT_IN
+#    define ENABLE_RGB_MATRIX_CYCLE_OUT_IN_DUAL
+#    define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL
+#    define ENABLE_RGB_MATRIX_CYCLE_SPIRAL
+#    define ENABLE_RGB_MATRIX_DUAL_BEACON
+#    define ENABLE_RGB_MATRIX_RAINBOW_BEACON
+// #    define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS
+// #    define ENABLE_RGB_MATRIX_RAINDROPS
+#    define ENABLE_RGB_MATRIX_JELLYBEAN_RAINDROPS
+// #    define ENABLE_RGB_MATRIX_HUE_BREATHING
+// #    define ENABLE_RGB_MATRIX_HUE_PENDULUM
+// #    define ENABLE_RGB_MATRIX_HUE_WAVE
+#    define ENABLE_RGB_MATRIX_PIXEL_RAIN
+// #    define ENABLE_RGB_MATRIX_PIXEL_FLOW
+// #    define ENABLE_RGB_MATRIX_PIXEL_FRACTAL
+
+/* enabled only if RGB_MATRIX_FRAMEBUFFER_EFFECTS is defined */
+#    define ENABLE_RGB_MATRIX_TYPING_HEATMAP
+#    define ENABLE_RGB_MATRIX_DIGITAL_RAIN
+
+/*  enabled only of RGB_MATRIX_KEYPRESSES or RGB_MATRIX_KEYRELEASES is defined*/
+#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE
+// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE
+// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE
+#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE
+// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS
+// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTICROSS
+// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_NEXUS
+#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS
+#    define ENABLE_RGB_MATRIX_SPLASH
+// #    define ENABLE_RGB_MATRIX_MULTISPLASH
+#    define ENABLE_RGB_MATRIX_SOLID_SPLASH
+// #    define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
+
+/* Set LED driver current */
+#    define CKLED2001_CURRENT_TUNE \
+        { 0x38, 0x38, 0x38, 0x38, 0x38, 0x38, 0x38, 0x38, 0x38, 0x38, 0x38, 0x38 }
+
+#endif
