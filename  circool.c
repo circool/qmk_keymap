@@ -1,13 +1,4 @@
-#include "k8_pro.h"
-
-
-
-#include "stdint.h"
-#include "hal.h"
-#include "gpio.h"
-#include "quantum.h"
-
-
+// Дополниеьльные процедуры
 // Определение разных цветов для каждого слоя
 static uint32_t layer_colors[4] = {
   0x000000, // Отключен
